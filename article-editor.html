@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>ویرایشگر مقاله</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<script src="./telegram-web-app.js"></script>
+<link rel="stylesheet" href="./article-editor.css">
+</head>
+<body>
+
+<div class="app">
+    <div class="tabs">
+        <div class="tab-highlight" id="tab-highlight"></div>
+        <button class="tab active" data-tab="saved"><span data-icon="folder" data-icon-size="16"></span> ذخیره‌ها</button>
+        <button class="tab" data-tab="editor"><span data-icon="edit" data-icon-size="16"></span> ساخت پست</button>
+        <button class="tab" data-tab="send"><span data-icon="send" data-icon-size="16"></span> ارسال</button>
+    </div>
+
+    <div class="content">
+        <div class="panel active" id="panel-saved">
+            <div id="post-list" class="post-list"></div>
+            <div id="empty-saved" class="empty hidden">
+                هنوز پستی نداری<br>روی <b>+</b> پایین راست بزن
+            </div>
+        </div>
+
+        <div class="panel" id="panel-editor">
+            <div class="editor-shell">
+                <!-- Top horizontal toolbar -->
+                <div class="top-bar">
+                    <button class="bar-toggle" id="top-toggle" title="ابزار">
+                        <span data-icon="chev_l" data-icon-size="20"></span>
+                    </button>
+                    <div class="top-icons" id="sidebar">
+                        <button class="sidebar-btn" data-add="text"     title="متن"    data-icon="type"      data-icon-size="20"></button>
+                        <button class="sidebar-btn" data-add="image"    title="عکس"    data-icon="image"     data-icon-size="20"></button>
+                        <button class="sidebar-btn" data-add="file"     title="فایل"   data-icon="paperclip" data-icon-size="20"></button>
+                        <button class="sidebar-btn" data-add="audio"    title="موزیک"  data-icon="music"     data-icon-size="20"></button>
+                        <button class="sidebar-btn" data-add="video"    title="ویدیو"  data-icon="video"     data-icon-size="20"></button>
+                        <button class="sidebar-btn" data-add="voice"    title="ویس"    data-icon="mic"       data-icon-size="20"></button>
+                        <button class="sidebar-btn" data-add="contact"  title="مخاطب"  data-icon="user"      data-icon-size="20"></button>
+                    </div>
+                </div>
+
+                <!-- Editor -->
+                <div class="editor-body">
+                    <div class="blocks-wrap" id="blocks"></div>
+                </div>
+
+                <!-- Bottom toolbar -->
+                <div class="bottom-bar" id="bottom-bar">
+                    <div class="toolbar-inner">
+                        <button class="tbtn" data-add="table"   title="جدول" data-icon="table"     data-icon-size="20"></button>
+                        <button class="tbtn" data-add="math"    title="فرمول" data-icon="sigma"    data-icon-size="20"></button>
+                        <button class="tbtn" data-add="divider" title="خط"   data-icon="minus"     data-icon-size="20"></button>
+                        <button class="tbtn" data-add="footer"  title="پابرگ" data-icon="paragraph" data-icon-size="20"></button>
+                        <button class="tbtn tbtn-round" id="fmt-btn" title="فرمت متن" data-icon="format" data-icon-size="20"></button>
+                        <button class="tbtn tbtn-round" id="biu-btn" title="فرمت درون‌خطی" data-icon="bold" data-icon-size="20"></button>
+                    </div>
+
+                    <button class="bar-toggle" id="bottom-toggle" title="بستن">
+                        <span data-icon="chev_down" data-icon-size="18"></span>
+                    </button>
+
+                    <!-- Fmt menu (Aa) -->
+                    <div class="fmt-menu" id="fmt-menu">
+                        <button class="fmt-item" data-fmt="h1"><span class="fi-icon" data-icon="h1" data-icon-size="16"></span><span class="fi-label">تیتر بزرگ</span></button>
+                        <button class="fmt-item" data-fmt="h2"><span class="fi-icon" data-icon="h2" data-icon-size="16"></span><span class="fi-label">تیتر متوسط</span></button>
+                        <button class="fmt-item" data-fmt="h3"><span class="fi-icon" data-icon="h3" data-icon-size="16"></span><span class="fi-label">تیتر کوچک</span></button>
+                        <button class="fmt-item" data-fmt="p"><span class="fi-icon" data-icon="format" data-icon-size="16"></span><span class="fi-label">متن معمولی</span></button>
+                        <button class="fmt-item" data-fmt="blockquote"><span class="fi-icon" data-icon="quote" data-icon-size="16"></span><span class="fi-label">نقل قول</span></button>
+                        <button class="fmt-item" data-fmt="pullquote"><span class="fi-icon" data-icon="quote" data-icon-size="16"></span><span class="fi-label">نقل قول برجسته</span></button>
+                        <button class="fmt-item" data-fmt="list"><span class="fi-icon" data-icon="list" data-icon-size="16"></span><span class="fi-label">لیست (بالت)</span></button>
+                        <button class="fmt-item" data-fmt="list_ordered"><span class="fi-icon" data-icon="list" data-icon-size="16"></span><span class="fi-label">لیست (شماره‌دار)</span></button>
+                        <button class="fmt-item" data-fmt="pre"><span class="fi-icon" data-icon="code" data-icon-size="16"></span><span class="fi-label">بلوک کد</span></button>
+                        <button class="fmt-item" data-fmt="clear"><span class="fi-icon" data-icon="x" data-icon-size="16"></span><span class="fi-label">پاک کردن فرمت</span></button>
+                    </div>
+
+                    <!-- BIU menu -->
+                    <div class="biu-menu" id="biu-menu">
+                        <button class="fmt-item" data-inline="bold"><span class="fi-icon" data-icon="bold" data-icon-size="16"></span><span class="fi-label">بولد</span></button>
+                        <button class="fmt-item" data-inline="italic"><span class="fi-icon" data-icon="type" data-icon-size="16"></span><span class="fi-label">ایتالیک</span></button>
+                        <button class="fmt-item" data-inline="underline"><span class="fi-icon" data-icon="format" data-icon-size="16"></span><span class="fi-label">زیرخط</span></button>
+                        <button class="fmt-item" data-inline="strikeThrough"><span class="fi-icon" data-icon="minus" data-icon-size="16"></span><span class="fi-label">خط خورده</span></button>
+                        <button class="fmt-item" data-inline="spoiler"><span class="fi-icon" data-icon="eye" data-icon-size="16"></span><span class="fi-label">اسپویلر</span></button>
+                        <button class="fmt-item" data-inline="code"><span class="fi-icon" data-icon="code" data-icon-size="16"></span><span class="fi-label">کد درون‌خطی</span></button>
+                        <button class="fmt-item" data-inline="link"><span class="fi-icon" data-icon="link" data-icon-size="16"></span><span class="fi-label">لینک</span></button>
+                        <button class="fmt-item" data-inline="button"><span class="fi-icon" data-icon="send" data-icon-size="16"></span><span class="fi-label">دکمه شیشه‌ای</span></button>
+                        <button class="fmt-item" data-inline="clear"><span class="fi-icon" data-icon="x" data-icon-size="16"></span><span class="fi-label">پاک کردن</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel" id="panel-send">
+            <div class="card">
+                <div class="card-label"><span data-icon="edit" data-icon-size="14"></span> پست انتخابی</div>
+                <div class="channel-row"><span id="post-info-text">هیچ پستی انتخاب نشده</span></div>
+            </div>
+            <div class="card">
+                <div class="card-label"><span data-icon="send" data-icon-size="14"></span> چنل مقصد</div>
+                <div class="channel-row" id="channel-row">
+                    <span class="channel-dot"></span>
+                    <span id="channel-text">در حال بررسی...</span>
+                </div>
+                <button class="btn-outline hidden" id="btn-setchannel">+ ست کردن چنل</button>
+            </div>
+            <div class="card">
+                <div class="timer-row">
+                    <div class="card-label" style="margin:0;"><span data-icon="clock" data-icon-size="14"></span> ارسال با تایمر</div>
+                    <button class="switch" id="timer-switch"></button>
+                </div>
+                <div class="timer-picker" id="timer-picker">
+                    <div class="timer-chips">
+                        <button class="timer-chip active" data-mins="60">۱ ساعت</button>
+                        <button class="timer-chip" data-mins="180">۳ ساعت</button>
+                        <button class="timer-chip" data-mins="720">۱۲ ساعت</button>
+                        <button class="timer-chip" data-mins="1440">۲۴ ساعت</button>
+                    </div>
+                </div>
+                <div class="timer-hint" id="timer-hint"></div>
+            </div>
+            <button class="btn-primary" id="send-btn" disabled><span data-icon="send" data-icon-size="18"></span> ارسال به چنل</button>
+        </div>
+    </div>
+</div>
+
+<button class="fab hidden" id="add-fab"><span data-icon="plus" data-icon-size="26"></span></button>
+<div class="toast" id="toast"></div>
+
+<!-- ═══════ Modal: Link ═══════ -->
+<div class="modal" id="modal-link">
+    <div class="modal-sheet">
+        <div class="modal-title"><span data-icon="link" data-icon-size="18"></span> افزودن لینک</div>
+        <input type="url" id="modal-link-url" class="modal-input" placeholder="https://..." dir="ltr">
+        <input type="text" id="modal-link-text" class="modal-input" placeholder="متن نمایشی (اختیاری)">
+        <div class="modal-actions">
+            <button class="modal-cancel" onclick="closeModal('modal-link')">لغو</button>
+            <button class="modal-ok" onclick="insertLink()">افزودن</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════ Modal: Files ═══════ -->
+<div class="modal" id="modal-files">
+    <div class="modal-sheet">
+        <div class="modal-title" id="files-title"><span data-icon="paperclip" data-icon-size="18"></span> افزودن فایل</div>
+        <div class="source-tab">
+            <button class="active" data-src="local" onclick="switchSource('local')">از دستگاه</button>
+            <button data-src="bot" onclick="switchSource('bot')">از ربات</button>
+        </div>
+        <div class="modal-body" id="files-list"></div>
+        <div class="modal-actions">
+            <button class="modal-cancel" onclick="closeModal('modal-files')">بستن</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════ Modal: Math ═══════ -->
+<div class="modal" id="modal-math">
+    <div class="modal-sheet">
+        <div class="modal-title"><span data-icon="sigma" data-icon-size="18"></span> فرمول ریاضی</div>
+        <input type="text" id="math-input" class="modal-input" placeholder="\sum_{i=1}^{n} i = \frac{n(n+1)}{2}" dir="ltr" style="font-family:monospace;font-size:14px;text-align:center;">
+        <div class="math-keys" id="math-keys"></div>
+        <div class="modal-actions">
+            <button class="modal-cancel" onclick="closeModal('modal-math')">لغو</button>
+            <button class="modal-ok" onclick="confirmMath()">افزودن</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════ Modal: Button (Multi-tab) ═══════ -->
+<div class="modal" id="modal-button">
+    <div class="modal-sheet">
+        <div class="modal-title"><span data-icon="send" data-icon-size="18"></span> افزودن دکمه</div>
+
+        <div class="btn-tabs">
+            <button class="btn-tab active" data-tab="inmsg">📌 داخل پست</button>
+            <button class="btn-tab" data-tab="reply">📎 زیر پست</button>
+        </div>
+
+        <div class="btn-tab-pane active" data-pane="inmsg">
+            <div id="btn-inmsg-list"></div>
+            <button class="btn-add-row" data-add="inmsg">➕ افزودن دکمه</button>
+        </div>
+
+        <div class="btn-tab-pane" data-pane="reply">
+            <div id="btn-reply-list"></div>
+            <button class="btn-add-row" data-add="reply">➕ افزودن دکمه</button>
+        </div>
+
+        <div class="modal-actions">
+            <button class="modal-cancel" onclick="closeModal('modal-button')">لغو</button>
+            <button class="modal-ok" onclick="insertButtons()">افزودن</button>
+        </div>
+    </div>
+</div>
+
+<script src="./article-editor.js"></script>
+</body>
+</html>
