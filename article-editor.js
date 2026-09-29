@@ -22,8 +22,10 @@ var USER_ID = 0;
 })();
 
 var STORAGE_KEY = 'appself_posts_v17';
-var FILES_API = location.origin + '/files';
-var UPLOAD_URL = location.origin + '/upload';
+// ⚠️ از GitHub Pages سرو می‌شه → سرور پایتون در دسترس نیست
+// برای فایل از PV ربات استفاده کن
+var FILES_API = '';
+var UPLOAD_URL = '';
 
 var posts = [];
 var currentPostId = null;
@@ -1345,8 +1347,11 @@ async function uploadLocal(file) {
 async function renderBotFiles() {
     var list = document.getElementById('files-list');
     if (!list) return;
-    if (!USER_ID) {
-        list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--danger);font-size:13px;">USER_ID پیدا نشد</div>';
+    if (!FILES_API) {
+        list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text2);font-size:13px;line-height:1.9;">'
+            + '📎 آپلود از داخل Mini App نیاز به سرور داره.<br>'
+            + 'به <b>PV ربات</b> برو، فایل رو بفرست، بعد برگرد.'
+            + '</div>';
         return;
     }
     list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text2);font-size:13px;">در حال بارگذاری...</div>';
