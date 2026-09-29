@@ -1023,7 +1023,7 @@ if (topToggle && topIcons) {
         topIcons.classList.toggle('collapsed', !topOpen);
         var icon = topToggle.querySelector('[data-icon]');
         if (icon) {
-            icon.setAttribute('data-icon', topOpen ? 'chev_l' : 'chev_r');
+            icon.setAttribute('data-icon', topOpen ? 'chev_up' : 'chev_down');
             icon.dataset.iconDone = '';
             injectIcons(topToggle);
         }
